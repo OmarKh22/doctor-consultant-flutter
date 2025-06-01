@@ -1,5 +1,66 @@
+import 'dart:async';
+import 'package:day4task1/doctorFinder.dart';
 import 'package:flutter/material.dart';
-import 'signup.dart'; 
+import 'package:shared_preferences/shared_preferences.dart';
+import 'signup.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Doctor Consultation App',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      debugShowCheckedModeBanner: false,
+      home: const SplashScreen(),
+      routes: {'/signup': (context) => SignUpScreen()},
+    );
+  }
+}
+
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _navigate();
+  }
+
+  Future<void> _navigate() async {
+    await Future.delayed(const Duration(seconds: 5));
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+
+    if (isLoggedIn) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const DoctorFinderPage()),
+      );
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => SignUpScreen()),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return const DoctorConsultationPage();
+  }
+}
 
 class DoctorConsultationPage extends StatelessWidget {
   const DoctorConsultationPage({Key? key}) : super(key: key);
@@ -12,10 +73,7 @@ class DoctorConsultationPage extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFF6B7FFF), 
-              Color(0xFF4A5CFF), 
-            ],
+            colors: [Color(0xFF6B7FFF), Color(0xFF4A5CFF)],
           ),
         ),
         child: SafeArea(
@@ -23,37 +81,20 @@ class DoctorConsultationPage extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 32.0),
             child: Column(
               children: [
-            
-
                 // Doctor Avatar
-                Container(
-                  // width: 250,
-                  // height: 250,
-                  // decoration: const BoxDecoration(
-                  //   color: Colors.white,
-                  //   shape: BoxShape.circle,
-                  // ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(1.0),
-                    child: ClipOval(
-                      child: Container(
-                        // decoration: const BoxDecoration(
-                        //   color: Color(0xFFF5F5F5),
-                        // ),
-                        child: Center(
-                          child: Image.asset(
-                            'assets/doctor.png',
-                            fit: BoxFit.cover,
-                            width: 700,
-                            height: 550,
-                          ),
-                        ),
+                Padding(
+                  padding: const EdgeInsets.all(1.0),
+                  child: ClipOval(
+                    child: Center(
+                      child: Image.asset(
+                        'assets/doctor.png',
+                        fit: BoxFit.cover,
+                        width: 300,
+                        height: 350,
                       ),
                     ),
                   ),
                 ),
-
-           
 
                 // Title Text
                 const Text(
@@ -69,20 +110,12 @@ class DoctorConsultationPage extends StatelessWidget {
 
                 const Spacer(flex: 2),
 
-               
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                   
                     TextButton(
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                SignUpScreen(), 
-                          ),
-                        );
+                        Navigator.pushNamed(context, '/signup');
                       },
                       child: const Text(
                         'Skip',
@@ -90,7 +123,7 @@ class DoctorConsultationPage extends StatelessWidget {
                       ),
                     ),
 
-                    
+                    // Page Indicators
                     Row(
                       children: [
                         Container(
@@ -122,7 +155,7 @@ class DoctorConsultationPage extends StatelessWidget {
                       ],
                     ),
 
-                   
+                    // "Go" Button
                     Container(
                       width: 50,
                       height: 50,
@@ -132,17 +165,12 @@ class DoctorConsultationPage extends StatelessWidget {
                       ),
                       child: TextButton(
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => SignUpScreen(),
-                            ),
-                          );
+                          Navigator.pushNamed(context, '/signup');
                         },
                         child: const Text(
                           'Go',
                           style: TextStyle(
-                            color: Color(0xFFFF6B35), 
+                            color: Color(0xFFFF6B35),
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
                           ),
@@ -160,21 +188,4 @@ class DoctorConsultationPage extends StatelessWidget {
       ),
     );
   }
-}
-
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Doctor Consultation App',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      debugShowCheckedModeBanner: false,
-      home: const DoctorConsultationPage(),
-    );
-  }
-}
-
-void main() {
-  runApp(MyApp());
 }

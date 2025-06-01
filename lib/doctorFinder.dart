@@ -1,8 +1,15 @@
-import 'package:day4task1/doctorProfile.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'doctorProfile.dart';
 
 class DoctorFinderPage extends StatelessWidget {
   const DoctorFinderPage({super.key});
+
+  void _signOut(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('username');
+    Navigator.pushReplacementNamed(context, '/signup');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,16 +22,19 @@ class DoctorFinderPage extends StatelessWidget {
             children: [
               const SizedBox(height: 20),
 
-              // Header Row
+              // Header Row with Logout
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Icon(Icons.grid_view_rounded),
+                  GestureDetector(
+                    onTap: () => _signOut(context),
+                    child: const Icon(Icons.logout, color: Colors.red),
+                  ),
                   Row(
-                    children: [
-                      const Icon(Icons.calendar_month_outlined),
-                      const SizedBox(width: 6),
-                      const Text(
+                    children: const [
+                      Icon(Icons.calendar_month_outlined),
+                      SizedBox(width: 6),
+                      Text(
                         "30 May, 2025",
                         style: TextStyle(color: Colors.black54),
                       ),
